@@ -18,7 +18,15 @@ RSpec.describe ActiveRecord::ConnectionAdapters::MyAdapter do
     end
     
     it "create a table" do
-      binding.irb
+      expect {
+        ActiveRecord::Schema.define(version: 1) do
+          create_table :shows, force: true do |t|
+            t.string :name
+          end
+        end
+      }.not_to raise_error
+    end
+  end
       ActiveRecord::Schema.define(version: 1) do
         create_table :shows, force: true do |t|
           t.string :name
