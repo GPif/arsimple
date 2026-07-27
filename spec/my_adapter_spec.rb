@@ -55,5 +55,13 @@ RSpec.describe ActiveRecord::ConnectionAdapters::MyAdapter do
       expect(Show.count).to eq(1)
       expect(Show.first.name).to eq("Breaking Bad")
     end
+
+    it "update record" do
+      s = Show.create(name: "Breaking Bad", episodes: 42)
+      s.episodes = 47
+      s.save!
+
+      expect(s.reload.episodes).to eq(47)
+    end
   end
 end

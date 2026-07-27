@@ -26,9 +26,7 @@ module ActiveRecord
           total_changes_before_query = raw_connection.total_changes
           stmt = raw_connection.prepare(intent)
           begin
-            unless binds.nil? || binds.empty?
-              stmt.bind_params(type_casted_binds)
-            end
+            stmt.bind_params(type_casted_binds) unless binds.nil? || binds.empty?
             result = if stmt.column_count.zero? # No return
                        stmt.step
                        affected_rows = raw_connection.total_changes > total_changes_before_query ? raw_connection.changes : 0
@@ -50,6 +48,10 @@ module ActiveRecord
           # Given that SQLite3 doesn't have a Result type, raw_execute already returns an ActiveRecord::Result
           # so we have nothing to cast here.
           result
+        end
+
+        def affected_rows(result)
+          result.affected_rows
         end
       end
     end
