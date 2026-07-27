@@ -30,6 +30,22 @@ module ActiveRecord
           scope[:type] = type if type
           scope
         end
+
+        private
+
+        def new_column_from_field(_table_name, field, _definitions)
+          default_function = nil
+
+          Column.new(
+            field["name"],
+            lookup_cast_type(field["type"]),
+            field["dflt_value"],
+            fetch_type_metadata(field["type"]),
+            field["notnull"].to_i.zero?,
+            default_function,
+            collation: field["collation"]
+          )
+        end
       end
     end
   end

@@ -46,6 +46,24 @@ module ActiveRecord
       def reconnect
         @raw_connection = self.class.new_client
       end
+
+      # To return ID
+      def supports_insert_returning?
+        true
+      end
+
+      private
+
+      def column_definitions(table_name)
+        structure = internal_exec_query("PRAGMA table_info(#{quote_table_name(table_name)})", "SCHEMA",
+                                        allow_retry: true)
+        if structure.empty?
+          raise ActiveRecord::StatementInvalid.new("Could not find table '#{table_name}'",
+                                                   connection_pool: @pool)
+        end
+
+        structure.to_a
+      end
     end
     register("my_adapter", "ActiveRecord::ConnectionAdapters::MyAdapter",
              "active_record/connection_adapters/my_adapter")

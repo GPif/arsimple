@@ -12,12 +12,23 @@ module ActiveRecord
           !read_query.match?(sql)
         end
 
+        def primary_keys(_tables)
+          r = internal_exec_query("PRAGMA table_info([shows]);")
+          pk = r.to_a.find { |r| r["pk"] == 1 }
+          return pk["name"] if pk
+
+          nil
+        end
+
         private
 
         def perform_query(raw_connection, intent, binds, type_casted_binds, prepare:, notification_payload:, batch:)
           total_changes_before_query = raw_connection.total_changes
           stmt = raw_connection.prepare(intent)
           begin
+            unless binds.nil? || binds.empty?
+              stmt.bind_params(type_casted_binds)
+            end
             result = if stmt.column_count.zero? # No return
                        stmt.step
                        affected_rows = raw_connection.total_changes > total_changes_before_query ? raw_connection.changes : 0
