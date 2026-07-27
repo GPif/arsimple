@@ -63,5 +63,12 @@ RSpec.describe ActiveRecord::ConnectionAdapters::MyAdapter do
 
       expect(s.reload.episodes).to eq(47)
     end
+
+    it "delete record" do
+      s = Show.create(name: "Breaking Bad", episodes: 42)
+      expect(Show.count).to eq(1)
+      s.destroy
+      expect(Show.count).to eq(0)
+    end
   end
 end
