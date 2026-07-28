@@ -12,8 +12,8 @@ module ActiveRecord
           !read_query.match?(sql)
         end
 
-        def primary_keys(_tables)
-          r = internal_exec_query("PRAGMA table_info([shows]);")
+        def primary_keys(table)
+          r = internal_exec_query("PRAGMA table_info([#{table}]);")
           pk = r.to_a.find { |r| r["pk"] == 1 }
           return pk["name"] if pk
 
